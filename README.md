@@ -15,8 +15,8 @@ the anime gacha bullet hell rhythm game mindustry event
 
 ## running on windows
 
-- I don't develop on Windows and I don't have much interest in adding support for it myself
-- you can try running the commands below, but I doubt they will work - if you know how to make compilation work on Windows, submit a PR
+- building on windows **does not work**
+- I don't develop on Windows and I don't have much interest in adding support for it myself; **use linux or WSL instead**
 
 ## running on desktop
 
@@ -33,10 +33,8 @@ the anime gacha bullet hell rhythm game mindustry event
 # future plans
 
 - code cleanup; main.nim is too big
-- better mobile controls/scaling
 - more levels, if I have time
 - better movement sync if possible, hit detection can be very janky sometimes
-- delay slider for audio, maybe settings
 
 *(as I am trying to focus on Mindustry now, don't expect any significant updates!)*
 
