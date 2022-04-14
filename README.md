@@ -2,7 +2,9 @@
 
 # animdustry
 
-the anime gacha bullet hell rhythm game mindustry event
+the anime gacha bullet hell rhythm game; *originally created as a mindustry april 1st event*
+
+[downloads for windows/linux/android are available on the releases page.](https://github.com/Anuken/animdustry/releases)
 
 # compiling
 
@@ -11,7 +13,7 @@ the anime gacha bullet hell rhythm game mindustry event
 1. install the latest stable version of Nim. `~/.nimble/bin` must be on your PATH.
 2. make sure this repository was cloned with `--recursive`, as it uses git submodules!
 3. if on linux, `sudo apt install -y xorg-dev libgl1-mesa-dev` or equivalent packages
-4. `nimble install`
+4. `nimble install -y -d` (the flags are important!)
 
 ## running on windows
 
@@ -20,7 +22,7 @@ the anime gacha bullet hell rhythm game mindustry event
 
 ## running on desktop
 
-- `nimble debug` to launch the game directly in debug mode
+- `nimble run` to launch the game directly
 - `nimble deploy <win/lin/mac>` to create an executable in the `build/` directory for a specific platform; cross-compiling for Windows requires mingw installed
 
 ## running/compiling on android
@@ -32,9 +34,17 @@ the anime gacha bullet hell rhythm game mindustry event
 
 # future plans
 
+- new name; "animdustry" is too long and gets cut off in the app drawer
 - code cleanup; main.nim is too big
 - more levels, if I have time
+- a level editor (in the distant future)
+- a new menu with a quit button + better character/level selection
 - better movement sync if possible, hit detection can be very janky sometimes
+- make it imposible to jump over conveyors
+- fix/reproduce beat skip bug
+- release on Google Play (when polished enough)
+- make audio latency use a special level or show the beat
+- release on iOS App Store (will almost certainly be paid there, if you're wondering)
 
 *(as I am trying to focus on Mindustry now, don't expect any significant updates!)*
 

@@ -4,7 +4,7 @@ description   = "Animdustry"
 license       = "GPL-3.0"
 srcDir        = "src"
 bin           = @["main"]
-binDir        = "jni"
+binDir        = "build"
 
 requires("nim >= 1.6.2")
 requires("https://github.com/Anuken/fau#" & staticExec("git -C fau rev-parse HEAD").replace("\n", "").replace("\r", ""))
@@ -28,8 +28,11 @@ const
 task pack, "Pack textures":
   shell &"faupack -p:{getCurrentDir()}/assets-raw/sprites -o:{getCurrentDir()}/assets/atlas --outlineFolder=outlined"
 
-task debug, "Debug build":
+task debug, "Run the game in debug mode - for development only!":
   shell &"nim r -d:debug src/{app}"
+
+task run, "Run the game":
+  shell &"nim r -d:release src/{app}"
 
 task debugBin, "Create debug build file":
   shell &"nim -d:debug -o:build/{app} --debugger:native src/{app}"
