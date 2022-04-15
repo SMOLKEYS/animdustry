@@ -1,4 +1,4 @@
-import ecs, types, fau/g2/font, std/[options, deques]
+import ecs, types, fau/g2/[font, ui], std/[options, deques]
 
 const
   #pixels
@@ -38,6 +38,8 @@ var
   
   fftValues*: array[fftSize, float32]
   titleFont*: Font
+
+  gamepadButtonStyle*: ButtonStyle
 
   #UI state section
 
@@ -88,7 +90,8 @@ let
     title: "-BOULDER-",
     subtitle: "it's just a rock",
     unmoving: true,
-    ability: "utterly useless"
+    ability: "utterly useless",
+    hidden: true
   )
   unitAlpha* = Unit(
     name: "alpha",

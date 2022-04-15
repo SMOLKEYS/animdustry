@@ -183,7 +183,6 @@ makeSystem("drawUI", []):
         if keyMouseLeft.tapped and bounds.contains(mouseWorld):
           mobileUnitSwitch = i
 
-    #TODO pad controls bad
     if isMobile and settings.gamepad:
       let 
         padSize = 1.75f
@@ -192,7 +191,7 @@ makeSystem("drawUI", []):
       
       for i, pos in d4f:
         let dp = padPos + pos * padSize
-        if button(rectCenter(dp, vec2(padSize)), icon = "arrow".patchConst, rotation = i.float32 * 90f.rad) and keyMouseLeft.tapped:
+        if button(rectCenter(dp, vec2(padSize)), icon = "arrow".patchConst, rotation = i.float32 * 90f.rad, style = gamepadButtonStyle) and keyMouseLeft.tapped:
           mobilePad = pos
 
   elif splashUnit.isSome and splashRevealTime > 0f: #draw splash unit reveal animation
@@ -318,13 +317,21 @@ makeSystem("drawUI", []):
     var bstyle = defaultButtonStyle
     bstyle.textUpColor = (%"ffda8c").mix(colorWhite, fau.time.sin(0.23f, 1f))
 
+    var totalVisible = 0
+    for unit in allUnits:
+      if not unit.hidden or unit.unlocked:
+        totalVisible.inc
+
     for i, unit in allUnits:
       let
         unlock = unit.unlocked
-        x = statsBounds.centerX - (allUnits.len - 1) * unitSpace/2f + i.float32 * unitSpace
+        x = statsBounds.centerX - (totalVisible - 1) * unitSpace/2f + i.float32 * unitSpace
         y = statsBounds.y + 6f.px
         hit = rect(x - unitSpace/2f, y, unitSpace, 32f.px)
         over = hit.contains(mouse) and unlock
+      
+      if unit.hidden and not unlock:
+        continue
       
       unit.fade = unit.fade.lerp(over.float32, fau.delta * 20f)
 
@@ -422,7 +429,7 @@ makeSystem("drawUI", []):
     for i in countdown(allMaps.len - 1, 0):
       let 
         map = allMaps[i]
-        unlocked = map.unlocked
+        unlocked = map.unlocked or defined(debug)
       assert map.preview != nil
 
       var
