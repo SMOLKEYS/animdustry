@@ -353,6 +353,6 @@ template createUnits*() =
       effectExplode(pos.vec2)
       damageBlocks(pos)
       for dir in d4edge():
-        for i in 1..2:
+        for i in 1..5:
           effectExplode((pos + dir * i).vec2)
           damageBlocks(pos + dir * i)
