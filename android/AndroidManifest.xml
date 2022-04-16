@@ -4,13 +4,13 @@
 
     <uses-feature android:glEsVersion="0x00020000" />
 
-    <application android:label="among dustry"
+    <application android:label="Animdustry (SMOLKEYS Build)"
                 android:allowBackup="true"
                 android:icon="@mipmap/ic_launcher"
                 android:hardwareAccelerated="true"
                 android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
         <activity android:name="android.app.NativeActivity"
-                  android:label="Animdustry"
+                  android:label="Animdustry (SMOLKEYS Build)"
                   android:configChanges="keyboardHidden|orientation|screenSize"
                   android:screenOrientation="user">
             <meta-data android:name="android.app.lib_name"
