@@ -24,3 +24,8 @@ jobs:
         run: |
           nimble install -y -d
           nimble androidPackage
+      - name: Upload built package
+        uses: actions/upload-artifact@v2
+        with:
+          name: Animdustry-SMOL-build
+          path: android/build/outputs/apk/debug/android-debug.apk
