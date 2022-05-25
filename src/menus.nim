@@ -146,16 +146,16 @@ makeSystem("drawUI", []):
     
     scoreTime = scoreTime.max(0f)
 
-    when isDesktop:
+    if isDesktop:
       defaultFont.draw(&"[ {state.points:04} ]", fau.cam.view.grow(vec2(-4f.px, 0f)), align = daTopLeft, color = colorWhite.mix(if scorePositive: colorAccent else: colorHit, scoreTime.pow(3f)))
-    else:
+    elif mode != gmDead and mode != gmFinished:
       let buttonSize = 1.5f
       if button(rectCenter(screen.topLeft - vec2(-buttonSize/2f, buttonSize/2f), vec2(buttonSize)), icon = patch(if mode == gmPlaying: "pause" else: "play")):
         togglePause()
 
     let
       progSize = vec2(22f.px, 0f)
-      progress = state.secs / state.map.sound.length
+      progress = state.secs / state.map.soundLength
       healthPos = fau.cam.viewport.topRight - vec2(0.75f)
 
     draw("progress".patchConst, vec2(0f, fau.cam.size.y / 2f - 0.4f))
@@ -240,7 +240,6 @@ makeSystem("drawUI", []):
       subtitleBounds = screen.grow(-2.2f)
       abilityW = screen.w / 4f
       abilityBounds = rect(screen.x + (screen.w - abilityW), screen.y, abilityW, screen.h).grow(-0.4f)
-      fullPatch = patch(&"{unit.name}-real")
 
     if not unit.draw.isNil:
       unit.draw(unit, pos)
@@ -260,11 +259,6 @@ makeSystem("drawUI", []):
         offset.x += ((index + 0.5f) - unit.title.len/2f) * 15f.px * splashTime.powout(3f)
       )
     )
-
-    #draw non-waifu sprite
-    if fullPatch.exists:
-      for i in signs():
-        draw(fullPatch, vec2(screen.centerX + unit.title.len/2f * (0.9f + splashTime.powout(3f) * 0.9f) * i.float32, screen.top - 0.75f))
 
     defaultFont.draw(unit.subtitle, subtitleBounds, color = rgb(0.8f), align = daTop, scale = 0.75f.px)
 

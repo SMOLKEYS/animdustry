@@ -74,14 +74,26 @@ onEcsBuilt:
       map: map1
     )
   
+  proc getSound(map: Beatmap): Sound =
+    if map.loadedSound.isSome:
+      return map.loadedSound.get
+    else:
+      result = loadMusicAsset("maps/" & map.music & ".ogg")
+      map.soundLength = result.length
+      map.loadedSound = result.some
+  
   proc playMap(next: Beatmap, offset = 0.0) =
     reset()
 
     #start with first unit
-    makeUnit(vec2i(), if save.lastUnit != nil: save.lastUnit else: save.units[0])
+    makeUnit(vec2i(0, 0), if save.lastUnit != nil: save.lastUnit else: save.units[0])
+
+    #for multichar testing
+    #makeUnit(vec2i(1, 0), unitZenith)
+    #makeUnit(vec2i(2, 0), unitOct)
 
     state.map = next
-    state.voice = state.map.sound.play()
+    state.voice = state.map.getSound.play()
     if offset > 0.0:
       state.voice.seek(offset)
     
@@ -365,7 +377,7 @@ makeSystem("updateMusic", []):
     let 
       maxCopper = if state.map.copperAmount == 0: defaultMapReward else: state.map.copperAmount
       #perfect amount of copper received if the player always moved and never missed / got hit
-      perfectPoints = state.map.sound.length * 60f / state.map.bpm
+      perfectPoints = state.map.soundLength * 60f / state.map.bpm
       #multiplier based on hits taken
       healthMultiplier = if state.totalHits == 0: 2.0 else: 1.0
       #fraction that was actually obtained
@@ -381,6 +393,13 @@ makeSystem("updateMusic", []):
 makeTimedSystem()
 
 makeSystem("input", [GridPos, Input, UnitDraw, Pos]):
+  var playerIndex = 0
+
+  #different axes for different characters
+  let 
+    axis1 = axisTap2(keyA, keyD, KeyCode.keyS, keyW)
+    axis2 = axisTap2(keyLeft, keyRight, keyDown, keyUp)
+
   all:
     const switchKeys = [key1, key2, key3, key4, key5, key6, key7, key8, key9, key0]
 
@@ -392,6 +411,7 @@ makeSystem("input", [GridPos, Input, UnitDraw, Pos]):
           item.input.lastSwitchTime = musicTime()
           effectCharSwitch(item.pos.vec + vec2(0f, 6f.px))
           save.lastUnit = unit
+          mobileUnitSwitch = -1
           break
 
     let canMove = if state.rawBeat > 0.5:
@@ -408,7 +428,18 @@ makeSystem("input", [GridPos, Input, UnitDraw, Pos]):
     var 
       moved = false
       failed = false
-      vec = if musicTime() >= item.input.lastInputTime and item.unitDraw.unit.unmoving.not: axisTap2(keyA, keyD, KeyCode.keyS, keyW) + axisTap2(keyLeft, keyRight, keyDown, keyUp) + mobilePad else: vec2()
+      validInput = musicTime() >= item.input.lastInputTime and item.unitDraw.unit.unmoving.not
+      vec = if validInput: mobilePad else: vec2()
+    
+    #2 player - separate controls
+    #1 (or many) players - shared controls
+    if sysInput.groups.len == 2:
+      if playerIndex == 0:
+        vec += axis1
+      else:
+        vec += axis2
+    else:
+      vec += axis1 + axis2
     
     #reset pad state after polling
     mobilePad = vec2()
@@ -501,6 +532,8 @@ makeSystem("input", [GridPos, Input, UnitDraw, Pos]):
         state.beatStats = "early"
     
     item.input.justMoved = moved
+  
+    playerIndex.inc
 
 makeSystem("runDelay", [RunDelay]):
   if state.newTurn:
@@ -793,7 +826,7 @@ makeSystem("drawSquish", [Pos, DrawSquish, Velocity, Snek, Scaled]):
 makeSystem("drawSpin", [Pos, DrawSpin, Scaled]):
   all:
     proc spinSprite(patch: Patch, pos: Vec2, scl: Vec2, rot: float32) =
-      let r = rot.mod 90f
+      let r = rot.mod 90f.rad
       draw(patch, pos, rotation = r, scl = scl)
       draw(patch, pos, rotation = r - 90f.rad, color = rgba(1f, 1f, 1f, r / 90f.rad), scl = scl)
 
@@ -849,5 +882,7 @@ include menus
 
 #unit textures dynamically loaded
 preloadFolder("textures")
+#as are map music files
+preloadFolder("maps")
 
 launchFau(initParams(title = "Animdustry"))
